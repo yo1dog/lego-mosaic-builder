@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import net.awesomebox.legoMosaicBuilder.lego.LegoBrick;
 import net.awesomebox.legoMosaicBuilder.lego.LegoColor;
 import net.awesomebox.legoMosaicBuilder.lego.LegoShape;
+import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 
 
 
@@ -160,7 +161,7 @@ public final class MosaicBuilder
 		
 		
 		// create mosaic using base shape
-		MosaicBrick[] mosaic = new MosaicBrick[mosaicStudWidth * mosaicStudHeight];
+		MosaicBrick[][] mosaic = new MosaicBrick[mosaicStudWidth][mosaicStudHeight];
 		
 		// keep track of colors used in the mosaic
 		ArrayList<LegoColor> colorsUsed = new ArrayList<LegoColor>();
@@ -246,7 +247,7 @@ public final class MosaicBuilder
 				for (int studOffsetY = 0; studOffsetY < baseShapeStudHeight; ++studOffsetY)
 				{
 					for (int studOffsetX = 0; studOffsetX < baseShapeStudWidth; ++studOffsetX)
-						mosaic[(studY + studOffsetY) * mosaicStudWidth + (studX + studOffsetX)] = new MosaicBrick(color1x1Brick.orientedBrickNonRotated, studX + studOffsetX, studY + studOffsetY);
+						mosaic[studX + studOffsetX][studY + studOffsetY] = new MosaicBrick(color1x1Brick.orientedBrickNonRotated, studX + studOffsetX, studY + studOffsetY);
 				}
 				
 				
@@ -361,7 +362,7 @@ public final class MosaicBuilder
 							for (int studOffsetX = 0; studOffsetX < brickShapeStudWidth; ++studOffsetX)
 							{
 								// check if this stud contains a 1x1 of the correct color
-								if (mosaic[(studY + studOffsetY) * mosaicStudWidth + (studX + studOffsetX)].orientedBrick.brick != color1x1Brick)
+								if (mosaic[studX + studOffsetX][studY + studOffsetY].orientedBrick.brick != color1x1Brick)
 								{
 									willFit = false;
 									break;
@@ -384,7 +385,7 @@ public final class MosaicBuilder
 							for (int studOffsetY = 0; studOffsetY < brickShapeStudHeight; ++studOffsetY)
 							{
 								for (int studOffsetX = 0; studOffsetX < brickShapeStudWidth; ++studOffsetX)
-									mosaic[(studY + studOffsetY) * mosaicStudWidth + (studX + studOffsetX)] = mosaicBrick;
+									mosaic[studX + studOffsetX][studY + studOffsetY] = mosaicBrick;
 							}
 							
 							// advance the length of the shape
@@ -421,7 +422,7 @@ public final class MosaicBuilder
 								for (int studOffsetY = 0; studOffsetY < brickShapeStudHeight; ++studOffsetY)
 								{
 									// check if this stud contains a 1x1 of the correct color
-									if (mosaic[(studY + studOffsetY) * mosaicStudWidth + (studX + studOffsetX)].orientedBrick.brick != color1x1Brick)
+									if (mosaic[studX + studOffsetX][studY + studOffsetY].orientedBrick.brick != color1x1Brick)
 									{
 										willFit = false;
 										break;
@@ -444,7 +445,7 @@ public final class MosaicBuilder
 								for (int studOffsetY = 0; studOffsetY < brickShapeStudHeight; ++studOffsetY)
 								{
 									for (int studOffsetX = 0; studOffsetX < brickShapeStudWidth; ++studOffsetX)
-										mosaic[(studY + studOffsetY) * mosaicStudWidth + (studX + studOffsetX)] = mosaicBrick;
+										mosaic[studX + studOffsetX][studY + studOffsetY] = mosaicBrick;
 								}
 								
 								// advance the length of the shape
@@ -469,7 +470,7 @@ public final class MosaicBuilder
 		{
 			for (int studX = 0; studX < mosaicBrickWidth; ++studX)
 			{
-				MosaicBrick mosaicBrick = mosaic[(studY) * mosaicStudWidth + (studX)];
+				MosaicBrick mosaicBrick = mosaic[studX][studY];
 				
 				if (!mosaicBricks.contains(mosaicBrick))
 					mosaicBricks.add(mosaicBrick);
@@ -480,7 +481,29 @@ public final class MosaicBuilder
 		
 		
 		
-		/*
+		
+		
+		
+		// =============================================================================
+		// =============================================================================
+		//
+		// Optimize Level 2
+		//
+		// =============================================================================
+		// 
+		// Combines and splits bricks for a more efficient brick placement.
+		//
+		// We iterate through each brick and check if there are any other bricks that
+		// the current brick could combine with. If there is one, we split the bricks
+		// in between if necessary and combine the bricks. We keep track of which bricks
+		// split which and we prevent a brick from splitting the brick who split them.
+		// This keeps us out of infinite loops.
+		//
+		// =============================================================================
+		// =============================================================================
+		
+		
+		
 		// optimize level 2
 		// combine and split bricks
 		ArrayList<MosaicBrick> bricksToOptimize = new ArrayList<MosaicBrick>(mosaicBricks);
@@ -493,17 +516,23 @@ public final class MosaicBuilder
 				continue;
 			
 			// check if there are any mosaic bricks that this mosaic brick can combine with
-				
-			// IMPORTANT: we assume bricks are ordered from largest to smallest
+			
+			
+			
+			
+			
+			
+			// --------------------------------------------------------------------
+			// Stretch Width
+			
+			
+			
+			
+			
 			// get the available widths for the brick's height
 			// example:
 			//  if the brick is a 1x2, the available widths are 1x2, 2x2, 3x2, 4x2, 6x2
 			//  if the brick is a 2x4, the available widths are 1x4, 2x4
-			
-			// get the available heights for the brick's width
-			// example:
-			//  if the brick is a 1x2, the available heights are 1x1, 1x2, 1x3, 1x4, 1x6
-			//  if the brick is a 2x4, the available heights are 2x1, 2x2, 2x3, 2x4, 2x6
 			OrientedLegoBrick[] orientedBrickWidths = mosaicBrick.orientedBrick.brick.color.getBricksByStudHeight(mosaicBrick.orientedBrick.orientedStudHeight);
 			int orientedBrickMaxWidth = mosaicBrick.orientedBrick.brick.color.getBricksByStudHeightMaxWidth(mosaicBrick.orientedBrick.orientedStudHeight);
 			
@@ -549,6 +578,11 @@ public final class MosaicBuilder
 					// check if there exists a brick that would cover the distance from the current brick's start
 					// to the second brick's end
 					int combiningBrickStudWidth = (combiningMosaicBrick.originStudX + combiningMosaicBrick.orientedBrick.orientedStudWidth) - mosaicBrick.originStudX;
+					
+					// make sure the width would not be longer than our max
+					if (combiningBrickStudWidth > orientedBrickMaxWidth)
+						continue;
+					
 					OrientedLegoBrick combiningOrientedBrick = orientedBrickWidths[combiningBrickStudWidth - 1];
 					
 					// if there is not a brick with the needed size to combine the bricks, we cannot combine
@@ -567,9 +601,9 @@ public final class MosaicBuilder
 					MosaicSplitBrick[] splitBricks = new MosaicSplitBrick[betweenBricksStudWidth * mosaicBrick.orientedBrick.orientedStudHeight];
 					int numSplitBricks = 0;
 					
-					for (int studOffsetX = 0; studOffsetX < betweenBricksStudWidth; ++studOffsetX)
+					for (int studOffsetY = 0; studOffsetY < mosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
 					{
-						for (int studOffsetY = 0; studOffsetY < mosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+						for (int studOffsetX = 0; studOffsetX < betweenBricksStudWidth; ++studOffsetX)
 						{
 							MosaicBrick brickToSplit = mosaic[mosaicBrick.originStudX + mosaicBrick.orientedBrick.orientedStudWidth + studOffsetX][mosaicBrick.originStudY + studOffsetY];
 							
@@ -596,8 +630,8 @@ public final class MosaicBuilder
 					{
 						MosaicSplitBrick splitBrick = splitBricks[i];
 						
-						// if the current brick has been split by this brick, we cannot split it
-						if (splitBrick.originalMosaicBrick.splitter == mosaicBrick)
+						// if the current brick or the combining brick has been split by this brick, we cannot split it
+						if (mosaicBrick.splitter == splitBrick.originalMosaicBrick || combiningMosaicBrick.splitter == splitBrick.originalMosaicBrick)
 						{
 							canSplitAllBricks = false;
 							break;
@@ -614,9 +648,9 @@ public final class MosaicBuilder
 						if (splitTopBrickHeight > 0)
 						{
 							// make sure we have a brick or two bricks that can fit the split size
-							splitBrick.topOrientedBrick = brickToSplitOrientedBrickHeights[splitTopBrickHeight - 1];
+							splitBrick.negOrientedBrick = brickToSplitOrientedBrickHeights[splitTopBrickHeight - 1];
 							
-							if (splitBrick.topOrientedBrick == null)
+							if (splitBrick.negOrientedBrick == null)
 							{
 								// there is no single brick that will fit the size
 								// try combinations of two bricks
@@ -631,10 +665,10 @@ public final class MosaicBuilder
 								boolean foundCombo = false;
 								for (int diff = 1; diff < numCombinations; ++diff)
 								{
-									splitBrick.topOrientedBrick      = brickToSplitOrientedBrickHeights[splitTopBrickHeight - numCombinations - 1];
-									splitBrick.topExtraOrientedBrick = brickToSplitOrientedBrickHeights[numCombinations - 1];
+									splitBrick.negOrientedBrick      = brickToSplitOrientedBrickHeights[splitTopBrickHeight - numCombinations - 1];
+									splitBrick.negExtraOrientedBrick = brickToSplitOrientedBrickHeights[numCombinations - 1];
 									
-									if (splitBrick.topOrientedBrick != null && splitBrick.topExtraOrientedBrick != null)
+									if (splitBrick.negOrientedBrick != null && splitBrick.negExtraOrientedBrick != null)
 									{
 										// found a combination
 										foundCombo = true;
@@ -659,9 +693,9 @@ public final class MosaicBuilder
 						if (splitBottomBrickHeight > 0)
 						{
 							// make sure we have a brick that fits the split size
-							splitBrick.bottomOrientedBrick = brickToSplitOrientedBrickHeights[splitBottomBrickHeight - 1];
+							splitBrick.posOrientedBrick = brickToSplitOrientedBrickHeights[splitBottomBrickHeight - 1];
 							
-							if (splitBrick.topOrientedBrick == null)
+							if (splitBrick.negOrientedBrick == null)
 							{
 								// there is no single brick that will fit the size
 								// try combinations of two bricks
@@ -676,10 +710,10 @@ public final class MosaicBuilder
 								boolean foundCombo = false;
 								for (int diff = 1; diff < numCombinations; ++diff)
 								{
-									splitBrick.bottomOrientedBrick      = brickToSplitOrientedBrickHeights[splitBottomBrickHeight - numCombinations - 1];
-									splitBrick.bottomExtraOrientedBrick = brickToSplitOrientedBrickHeights[numCombinations - 1];
+									splitBrick.posOrientedBrick      = brickToSplitOrientedBrickHeights[splitBottomBrickHeight - numCombinations - 1];
+									splitBrick.posExtraOrientedBrick = brickToSplitOrientedBrickHeights[numCombinations - 1];
 									
-									if (splitBrick.bottomOrientedBrick != null && splitBrick.bottomExtraOrientedBrick != null)
+									if (splitBrick.posOrientedBrick != null && splitBrick.posExtraOrientedBrick != null)
 									{
 										// found a combination
 										foundCombo = true;
@@ -704,6 +738,11 @@ public final class MosaicBuilder
 					
 					
 					// we can combine the bricks!
+					System.out.println("================H==================");
+					System.out.println("===================================");
+					System.out.println(mosaicBrick);
+					System.out.println("===================================");
+					
 					// split the bricks
 					for (int i = 0; i < numSplitBricks; ++i)
 					{
@@ -716,18 +755,18 @@ public final class MosaicBuilder
 						
 						
 						// place top
-						if (splitBrick.topOrientedBrick != null)
+						if (splitBrick.negOrientedBrick != null)
 						{
 							MosaicBrick topMosaicBrick = new MosaicBrick(
-									splitBrick.topOrientedBrick,
+									splitBrick.negOrientedBrick,
 									splitBrick.originalMosaicBrick.originStudX,
 									splitBrick.originalMosaicBrick.originStudY,
-									combinedMosaicBrick);
+									combinedMosaicBrick); // keep track of who split who
 							
 							// replace the studs with the new mosaic brick
-							for (int studOffsetY = 0; studOffsetY < topMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							for (int studOffsetX = 0; studOffsetX < topMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
 							{
-								for (int studOffsetX = 0; studOffsetX < topMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+								for (int studOffsetY = 0; studOffsetY < topMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
 									mosaic[topMosaicBrick.originStudX + studOffsetX][topMosaicBrick.originStudY + studOffsetY] = topMosaicBrick;
 							}
 							
@@ -737,45 +776,49 @@ public final class MosaicBuilder
 							// add the brick
 							mosaicBricks.add(topMosaicBrick);
 							System.out.println("Adding top: " + topMosaicBrick);
+							
+							
+							
+							// place top extra
+							if (splitBrick.negExtraOrientedBrick != null)
+							{
+								MosaicBrick topExtraMosaicBrick = new MosaicBrick(
+										splitBrick.negExtraOrientedBrick,
+										splitBrick.originalMosaicBrick.originStudX,
+										splitBrick.originalMosaicBrick.originStudY + splitBrick.negOrientedBrick.orientedStudHeight,
+										combinedMosaicBrick); // keep track of who split who
+								
+								// replace the studs with the new mosaic brick
+								for (int studOffsetX = 0; studOffsetX < topExtraMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+								{
+									for (int studOffsetY = 0; studOffsetY < topExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+										mosaic[topExtraMosaicBrick.originStudX + studOffsetX][topExtraMosaicBrick.originStudY + studOffsetY] = topExtraMosaicBrick;
+								}
+								
+								// optimize this brick again
+								bricksToOptimize.add(topExtraMosaicBrick);
+								
+								// add the brick
+								mosaicBricks.add(topExtraMosaicBrick);
+								System.out.println("Adding top extra: " + topExtraMosaicBrick);
+							}
 						}
 						
-						// place top extra
-						if (splitBrick.topExtraOrientedBrick != null)
-						{
-							MosaicBrick topExtraMosaicBrick = new MosaicBrick(
-									splitBrick.topExtraOrientedBrick,
-									splitBrick.originalMosaicBrick.originStudX,
-									splitBrick.originalMosaicBrick.originStudY + splitBrick.topOrientedBrick.orientedStudHeight,
-									combinedMosaicBrick);
-							
-							// replace the studs with the new mosaic brick
-							for (int studOffsetY = 0; studOffsetY < topExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
-							{
-								for (int studOffsetX = 0; studOffsetX < topExtraMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
-									mosaic[topExtraMosaicBrick.originStudX + studOffsetX][topExtraMosaicBrick.originStudY + studOffsetY] = topExtraMosaicBrick;
-							}
-							
-							// optimize this brick again
-							bricksToOptimize.add(topExtraMosaicBrick);
-							
-							// add the brick
-							mosaicBricks.add(topExtraMosaicBrick);
-							System.out.println("Adding top extra: " + topExtraMosaicBrick);
-						}
+						
 						
 						// place bottom
-						if (splitBrick.bottomOrientedBrick != null)
+						if (splitBrick.posOrientedBrick != null)
 						{
 							MosaicBrick bottomMosaicBrick = new MosaicBrick(
-									splitBrick.bottomOrientedBrick,
+									splitBrick.posOrientedBrick,
 									splitBrick.originalMosaicBrick.originStudX,
 									combinedMosaicBrick.originStudY + combinedMosaicBrick.orientedBrick.orientedStudHeight,
-									combinedMosaicBrick);
+									combinedMosaicBrick); // keep track of who split who
 							
 							// replace the studs with the new mosaic brick
-							for (int studOffsetY = 0; studOffsetY < bottomMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							for (int studOffsetX = 0; studOffsetX < bottomMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
 							{
-								for (int studOffsetX = 0; studOffsetX < bottomMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+								for (int studOffsetY = 0; studOffsetY < bottomMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
 									mosaic[bottomMosaicBrick.originStudX + studOffsetX][bottomMosaicBrick.originStudY + studOffsetY] = bottomMosaicBrick;
 							}
 							
@@ -785,30 +828,32 @@ public final class MosaicBuilder
 							// add the brick
 							mosaicBricks.add(bottomMosaicBrick);
 							System.out.println("Adding bottom: " + bottomMosaicBrick);
-						}
-						
-						// place bottom extra
-						if (splitBrick.bottomExtraOrientedBrick != null)
-						{
-							MosaicBrick bottomExtraMosaicBrick = new MosaicBrick(
-									splitBrick.bottomExtraOrientedBrick,
-									splitBrick.originalMosaicBrick.originStudX,
-									combinedMosaicBrick.originStudY + combinedMosaicBrick.orientedBrick.orientedStudHeight + splitBrick.bottomOrientedBrick.orientedStudHeight,
-									combinedMosaicBrick);
 							
-							// replace the studs with the new mosaic brick
-							for (int studOffsetY = 0; studOffsetY < bottomExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							
+							
+							// place bottom extra
+							if (splitBrick.posExtraOrientedBrick != null)
 							{
+								MosaicBrick bottomExtraMosaicBrick = new MosaicBrick(
+										splitBrick.posExtraOrientedBrick,
+										splitBrick.originalMosaicBrick.originStudX,
+										combinedMosaicBrick.originStudY + combinedMosaicBrick.orientedBrick.orientedStudHeight + splitBrick.posOrientedBrick.orientedStudHeight,
+										combinedMosaicBrick); // keep track of who split who
+								
+								// replace the studs with the new mosaic brick
 								for (int studOffsetX = 0; studOffsetX < bottomExtraMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
-									mosaic[bottomExtraMosaicBrick.originStudX + studOffsetX][bottomExtraMosaicBrick.originStudY + studOffsetY] = bottomExtraMosaicBrick;
+								{
+									for (int studOffsetY = 0; studOffsetY < bottomExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+										mosaic[bottomExtraMosaicBrick.originStudX + studOffsetX][bottomExtraMosaicBrick.originStudY + studOffsetY] = bottomExtraMosaicBrick;
+								}
+								
+								// optimize this brick again
+								bricksToOptimize.add(bottomExtraMosaicBrick);
+								
+								// add the brick
+								mosaicBricks.add(bottomExtraMosaicBrick);
+								System.out.println("Adding bottom extra: " + bottomExtraMosaicBrick);
 							}
-							
-							// optimize this brick again
-							bricksToOptimize.add(bottomExtraMosaicBrick);
-							
-							// add the brick
-							mosaicBricks.add(bottomExtraMosaicBrick);
-							System.out.println("Adding bottom extra: " + bottomExtraMosaicBrick);
 						}
 					}
 					
@@ -840,7 +885,383 @@ public final class MosaicBuilder
 					break;
 				}
 			}
-		}*/
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// --------------------------------------------------------------------
+			// Stretch Height
+			
+			
+			
+			
+			
+			// get the available heights for the brick's width
+			// example:
+			//  if the brick is a 1x2, the available heights are 1x1, 1x2, 1x3, 1x4, 1x6
+			//  if the brick is a 2x4, the available heights are 2x1, 2x2, 2x3, 2x4, 2x6
+			OrientedLegoBrick[] orientedBrickHeights = mosaicBrick.orientedBrick.brick.color.getBricksByStudWidth(mosaicBrick.orientedBrick.orientedStudWidth);
+			int orientedBrickMaxHeight = mosaicBrick.orientedBrick.brick.color.getBricksByStudWidthMaxHeight(mosaicBrick.orientedBrick.orientedStudWidth);
+			
+			
+			// start from one greater than the current height
+			// studYOffset = height - 1;
+			// height = orientedStudHeight + 1;
+			// studYOffset = orientedStudHeight + 1 - 1;
+			// studYOffset = orientedStudHeight;
+			for (int checkStudOffsetY = mosaicBrick.orientedBrick.orientedStudHeight; checkStudOffsetY < orientedBrickMaxHeight; ++checkStudOffsetY)
+			{
+				int checkStudY = mosaicBrick.originStudY + checkStudOffsetY;
+				
+				// if we hit the edge, we can't extend further
+				if (checkStudY >= mosaicStudHeight)
+					break;
+				
+				// make sure they are the correct color
+				boolean correctColor = true;
+				for (int studOffsetX = 0; studOffsetX < mosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+				{
+					if (mosaic[mosaicBrick.originStudX + studOffsetX][checkStudY].orientedBrick.brick.color != mosaicBrick.orientedBrick.brick.color)
+					{
+						correctColor = false;
+						break;
+					}
+				}
+				
+				// if there is a stud with a different color brick on it, we can't extend any further
+				if (!correctColor)
+					break;
+				
+				
+				// check if there is a brick we can combine with
+				MosaicBrick combiningMosaicBrick = mosaic[mosaicBrick.originStudX][checkStudY];
+				
+				// check if
+				//   both bricks have the same X origin (left sides are aligned)
+				//   both bricks have the same width
+				if (combiningMosaicBrick.originStudX == mosaicBrick.originStudX &&
+					combiningMosaicBrick.orientedBrick.orientedStudWidth == mosaicBrick.orientedBrick.orientedStudWidth)
+				{
+					// check if there exists a brick that would cover the distance from the current brick's start
+					// to the second brick's end
+					int combiningBrickStudHeight = (combiningMosaicBrick.originStudY + combiningMosaicBrick.orientedBrick.orientedStudHeight) - mosaicBrick.originStudY;
+					
+					// make sure the width would not be longer than our max
+					if (combiningBrickStudHeight > orientedBrickMaxHeight)
+						continue;
+					
+					OrientedLegoBrick combiningOrientedBrick = orientedBrickHeights[combiningBrickStudHeight - 1];
+					
+					// if there is not a brick with the needed size to combine the bricks, we cannot combine
+					if (combiningOrientedBrick == null)
+						continue;
+					
+					
+					// we should be able to combine these bricks as long as we can split the bricks in between
+					// create the combined brick
+					MosaicBrick combinedMosaicBrick = new MosaicBrick(combiningOrientedBrick, mosaicBrick.originStudX, mosaicBrick.originStudY);
+					
+					int betweenBricksStudHeight = combiningMosaicBrick.originStudY - (mosaicBrick.originStudY + mosaicBrick.orientedBrick.orientedStudHeight);
+					
+					
+					// create a list of all the bricks that need to be split
+					MosaicSplitBrick[] splitBricks = new MosaicSplitBrick[betweenBricksStudHeight * mosaicBrick.orientedBrick.orientedStudWidth];
+					int numSplitBricks = 0;
+					
+					for (int studOffsetX = 0; studOffsetX < mosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+					{
+						for (int studOffsetY = 0; studOffsetY < betweenBricksStudHeight; ++studOffsetY)
+						{
+							MosaicBrick brickToSplit = mosaic[mosaicBrick.originStudX + studOffsetX][mosaicBrick.originStudY + mosaicBrick.orientedBrick.orientedStudHeight + studOffsetY];
+							
+							// check if we already have this brick in our list
+							boolean duplicate = false;
+							for (int i = 0; i < numSplitBricks; ++i)
+							{
+								if (splitBricks[i].originalMosaicBrick == brickToSplit)
+								{
+									duplicate = true;
+									break;
+								}
+							}
+							
+							if (!duplicate)
+								splitBricks[numSplitBricks++] = new MosaicSplitBrick(brickToSplit);
+						}
+					}
+					
+					
+					// make sure we can split all the bricks in between
+					boolean canSplitAllBricks = true;
+					for (int i = 0; i < numSplitBricks; ++i)
+					{
+						MosaicSplitBrick splitBrick = splitBricks[i];
+						
+						// if the current brick or the combining brick has been split by this brick, we cannot split it
+						if (mosaicBrick.splitter == splitBrick.originalMosaicBrick || combiningMosaicBrick.splitter == splitBrick.originalMosaicBrick)
+						{
+							canSplitAllBricks = false;
+							break;
+						}
+						
+						// get the available widths for the brick we are splitting
+						OrientedLegoBrick[] brickToSplitOrientedBrickWidths = splitBrick.originalMosaicBrick.orientedBrick.brick.color.getBricksByStudHeight(splitBrick.originalMosaicBrick.orientedBrick.orientedStudHeight);
+						
+						
+						// split left
+						int splitLeftBrickWidth = combinedMosaicBrick.originStudX - splitBrick.originalMosaicBrick.originStudX;
+						
+						// if the left side of the brick we are splitting does not start to the left of the combined brick's left side, it will be removed
+						if (splitLeftBrickWidth > 0)
+						{
+							// make sure we have a brick or two bricks that can fit the split size
+							splitBrick.negOrientedBrick = brickToSplitOrientedBrickWidths[splitLeftBrickWidth - 1];
+							
+							if (splitBrick.negOrientedBrick == null)
+							{
+								// there is no single brick that will fit the size
+								// try combinations of two bricks
+								// only need to try half the combinations as the second half is the first repeated but backwards
+								// example:
+								//  splitTopBrickWidth = 5;
+								//  we have widths of 1,2,3,4,6
+								//  possible combinations are 5,0 4,1 3,2 2,3 1,4 0,5
+								//  skip 0 and try combinations 1 and 2
+								int numCombinations = (int)(splitLeftBrickWidth * 0.5f + 0.5f); // rounded up
+								
+								boolean foundCombo = false;
+								for (int diff = 1; diff < numCombinations; ++diff)
+								{
+									splitBrick.negOrientedBrick      = brickToSplitOrientedBrickWidths[splitLeftBrickWidth - numCombinations - 1];
+									splitBrick.negExtraOrientedBrick = brickToSplitOrientedBrickWidths[numCombinations - 1];
+									
+									if (splitBrick.negOrientedBrick != null && splitBrick.negExtraOrientedBrick != null)
+									{
+										// found a combination
+										foundCombo = true;
+										break;
+									}
+								}
+								
+								if (!foundCombo)
+								{
+									// there is not a brick with the needed size to create the top split brick
+									canSplitAllBricks = false;
+									break;
+								}
+							}
+						}
+						
+						
+						// split right
+						int splitRightBrickWidth = (splitBrick.originalMosaicBrick.originStudX + splitBrick.originalMosaicBrick.orientedBrick.orientedStudWidth) - (combinedMosaicBrick.originStudX + combinedMosaicBrick.orientedBrick.orientedStudWidth);
+						
+						// if the bottom of the brick we are splitting does not end bellow the combined brick's bottom, it will be removed
+						if (splitRightBrickWidth > 0)
+						{
+							// make sure we have a brick that fits the split size
+							splitBrick.posOrientedBrick = brickToSplitOrientedBrickWidths[splitRightBrickWidth - 1];
+							
+							if (splitBrick.negOrientedBrick == null)
+							{
+								// there is no single brick that will fit the size
+								// try combinations of two bricks
+								// only need to try half the combinations as the second half is the first repeated but backwards
+								// example:
+								//  splitTopBrickWidth = 5;
+								//  we have widths of 1,2,3,4,6
+								//  possible combinations are 5,0 4,1 3,2 2,3 1,4 0,5
+								//  skip 0 and try combinations 1 and 2
+								int numCombinations = (int)(splitRightBrickWidth * 0.5f + 0.5f); // rounded up
+								
+								boolean foundCombo = false;
+								for (int diff = 1; diff < numCombinations; ++diff)
+								{
+									splitBrick.posOrientedBrick      = brickToSplitOrientedBrickWidths[splitRightBrickWidth - numCombinations - 1];
+									splitBrick.posExtraOrientedBrick = brickToSplitOrientedBrickWidths[numCombinations - 1];
+									
+									if (splitBrick.posOrientedBrick != null && splitBrick.posExtraOrientedBrick != null)
+									{
+										// found a combination
+										foundCombo = true;
+										break;
+									}
+								}
+								
+								if (!foundCombo)
+								{
+									// there is not a brick with the needed size to create the bottom split brick
+									canSplitAllBricks = false;
+									break;
+								}
+							}
+						}
+					}
+					
+					// if we could not split all the bricks in between, then we cannot combine the bricks
+					// we also can not extend any further
+					if (!canSplitAllBricks)
+						break;
+					
+					
+					// we can combine the bricks!
+					System.out.println("================V==================");
+					System.out.println("===================================");
+					System.out.println(mosaicBrick);
+					System.out.println("===================================");
+					
+					// split the bricks
+					for (int i = 0; i < numSplitBricks; ++i)
+					{
+						MosaicSplitBrick splitBrick = splitBricks[i];
+						
+						// remove the original brick
+						splitBrick.originalMosaicBrick.remove();
+						mosaicBricks.remove(splitBrick.originalMosaicBrick);
+						System.out.println("Removing original: " + splitBrick.originalMosaicBrick);
+						
+						
+						// place left
+						if (splitBrick.negOrientedBrick != null)
+						{
+							MosaicBrick leftMosaicBrick = new MosaicBrick(
+									splitBrick.negOrientedBrick,
+									splitBrick.originalMosaicBrick.originStudX,
+									splitBrick.originalMosaicBrick.originStudY,
+									combinedMosaicBrick); // keep track of who split who
+							
+							// replace the studs with the new mosaic brick
+							for (int studOffsetY = 0; studOffsetY < leftMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							{
+								for (int studOffsetX = 0; studOffsetX < leftMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+									mosaic[leftMosaicBrick.originStudX + studOffsetX][leftMosaicBrick.originStudY + studOffsetY] = leftMosaicBrick;
+							}
+							
+							// optimize this brick again
+							bricksToOptimize.add(leftMosaicBrick);
+							
+							// add the brick
+							mosaicBricks.add(leftMosaicBrick);
+							System.out.println("Adding left: " + leftMosaicBrick);
+							
+							
+							
+							// place left extra
+							if (splitBrick.negExtraOrientedBrick != null)
+							{
+								MosaicBrick leftExtraMosaicBrick = new MosaicBrick(
+										splitBrick.negExtraOrientedBrick,
+										splitBrick.originalMosaicBrick.originStudX + splitBrick.negOrientedBrick.orientedStudWidth,
+										splitBrick.originalMosaicBrick.originStudY,
+										combinedMosaicBrick); // keep track of who split who
+								
+								// replace the studs with the new mosaic brick
+								for (int studOffsetY = 0; studOffsetY < leftExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+								{
+									for (int studOffsetX = 0; studOffsetX < leftExtraMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+										mosaic[leftExtraMosaicBrick.originStudX + studOffsetX][leftExtraMosaicBrick.originStudY + studOffsetY] = leftExtraMosaicBrick;
+								}
+								
+								// optimize this brick again
+								bricksToOptimize.add(leftExtraMosaicBrick);
+								
+								// add the brick
+								mosaicBricks.add(leftExtraMosaicBrick);
+								System.out.println("Adding left extra: " + leftExtraMosaicBrick);
+							}
+						}
+						
+						
+						
+						// place right
+						if (splitBrick.posOrientedBrick != null)
+						{
+							MosaicBrick rightMosaicBrick = new MosaicBrick(
+									splitBrick.posOrientedBrick,
+									combinedMosaicBrick.originStudX + combinedMosaicBrick.orientedBrick.orientedStudWidth,
+									splitBrick.originalMosaicBrick.originStudY,
+									combinedMosaicBrick); // keep track of who split who
+							
+							// replace the studs with the new mosaic brick
+							for (int studOffsetY = 0; studOffsetY < rightMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							{
+								for (int studOffsetX = 0; studOffsetX < rightMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+									mosaic[rightMosaicBrick.originStudX + studOffsetX][rightMosaicBrick.originStudY + studOffsetY] = rightMosaicBrick;
+							}
+							
+							// optimize this brick again
+							bricksToOptimize.add(rightMosaicBrick);
+							
+							// add the brick
+							mosaicBricks.add(rightMosaicBrick);
+							System.out.println("Adding right: " + rightMosaicBrick);
+							
+							
+							
+							// place right extra
+							if (splitBrick.posExtraOrientedBrick != null)
+							{
+								MosaicBrick rightExtraMosaicBrick = new MosaicBrick(
+										splitBrick.posExtraOrientedBrick,
+										combinedMosaicBrick.originStudX + combinedMosaicBrick.orientedBrick.orientedStudWidth + splitBrick.posOrientedBrick.orientedStudWidth,
+										splitBrick.originalMosaicBrick.originStudY,
+										combinedMosaicBrick); // keep track of who split who
+								
+								// replace the studs with the new mosaic brick
+								for (int studOffsetY = 0; studOffsetY < rightExtraMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+								{
+									for (int studOffsetX = 0; studOffsetX < rightExtraMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+										mosaic[rightExtraMosaicBrick.originStudX + studOffsetX][rightExtraMosaicBrick.originStudY + studOffsetY] = rightExtraMosaicBrick;
+								}
+								
+								// optimize this brick again
+								bricksToOptimize.add(rightExtraMosaicBrick);
+								
+								// add the brick
+								mosaicBricks.add(rightExtraMosaicBrick);
+								System.out.println("Adding right extra: " + rightExtraMosaicBrick);
+							}
+						}
+					}
+					
+					
+					// combine the bricks
+					// remove the originals
+					mosaicBrick.remove();
+					combiningMosaicBrick.remove();
+					
+					mosaicBricks.remove(mosaicBrick);
+					mosaicBricks.remove(combiningMosaicBrick);
+					System.out.println("Removing current: " + mosaicBrick);
+					System.out.println("Removing combining: " + combiningMosaicBrick);
+					
+					
+					// place the combined brick
+					for (int studOffsetX = 0; studOffsetX < combinedMosaicBrick.orientedBrick.orientedStudWidth; ++studOffsetX)
+					{
+						for (int studOffsetY = 0; studOffsetY < combinedMosaicBrick.orientedBrick.orientedStudHeight; ++studOffsetY)
+							mosaic[combinedMosaicBrick.originStudX + studOffsetX][combinedMosaicBrick.originStudY + studOffsetY] = combinedMosaicBrick;
+					}
+					
+					// optimize this brick again
+					bricksToOptimize.add(combinedMosaicBrick);
+					
+					// add the brick
+					mosaicBricks.add(combinedMosaicBrick);
+					System.out.println("Adding combined: " + combinedMosaicBrick);
+					break;
+				}
+			}
+		}
 		
 		return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]));
 	}

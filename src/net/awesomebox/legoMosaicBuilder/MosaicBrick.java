@@ -42,6 +42,9 @@ public final class MosaicBrick
 		return
 			super.toString() + "\n" + 
 			this.originStudX + ", " + this.originStudY + "\n" +
-			this.orientedBrick.orientedStudWidth + " x " + this.orientedBrick.orientedStudHeight;
+			this.orientedBrick.orientedStudWidth + " x " + this.orientedBrick.orientedStudHeight + "\n" +
+			"splitter: " + String.valueOf(splitter) + "\n" +
+			"-------------";
+			
 	}
 }

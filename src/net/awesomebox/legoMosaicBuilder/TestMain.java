@@ -34,7 +34,7 @@ public class TestMain
 	{
 		LegoConnector.init();
 		
-		String imageFilename = System.getProperty("user.dir") + "\\res\\testCase2.bmp";
+		String imageFilename = System.getProperty("user.dir") + "\\res\\testCase1.bmp";
 		System.out.println(imageFilename);
 		BufferedImage image = ImageIO.read(new File(imageFilename));
 		

@@ -6,10 +6,10 @@ import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 public final class MosaicSplitBrick
 {
 	public final MosaicBrick originalMosaicBrick;
-	public OrientedLegoBrick topOrientedBrick;
-	public OrientedLegoBrick topExtraOrientedBrick;
-	public OrientedLegoBrick bottomOrientedBrick;
-	public OrientedLegoBrick bottomExtraOrientedBrick;
+	public OrientedLegoBrick negOrientedBrick;
+	public OrientedLegoBrick negExtraOrientedBrick;
+	public OrientedLegoBrick posOrientedBrick;
+	public OrientedLegoBrick posExtraOrientedBrick;
 	
 	public MosaicSplitBrick(MosaicBrick originalMosaicBrick)
 	{
