@@ -11,6 +11,7 @@ public final class MosaicBrick
 	public final MosaicBrick splitter;
 	
 	private boolean removed;
+	private boolean level3Optimized;
 	
 	
 	public MosaicBrick(OrientedLegoBrick orientedBrick, int originStudX, int originStudY)
@@ -25,6 +26,7 @@ public final class MosaicBrick
 		this.splitter = splitter;
 		
 		removed = false;
+		level3Optimized = false;
 	}
 	
 	
@@ -36,6 +38,17 @@ public final class MosaicBrick
 	{
 		return removed;
 	}
+	
+	
+	public void level3Optimize()
+	{
+		level3Optimized = true;
+	}
+	public boolean wasLevel3Optimized()
+	{
+		return level3Optimized;
+	}
+	
 	
 	public String toString()
 	{

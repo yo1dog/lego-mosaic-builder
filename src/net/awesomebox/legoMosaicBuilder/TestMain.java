@@ -25,7 +25,7 @@ public class TestMain
 	
 	private static Mosaic mosaic;
 	private static int studPixelSize;
-	private static int gap = 5;
+	private static int gap = 1;
 	private static MosaicBrick selectedMosaicBrick;
 	private static CustomPanel panel;
 	private static JFrame frame;
@@ -38,8 +38,8 @@ public class TestMain
 		System.out.println(imageFilename);
 		BufferedImage image = ImageIO.read(new File(imageFilename));
 		
-		mosaic = MosaicBuilder.buildMosaic(image, IMAGE_SIZE, IMAGE_SIZE, BASE_SHAPE, false);
-		
+		mosaic = MosaicBuilder.buildMosaic(image, IMAGE_SIZE, IMAGE_SIZE, BASE_SHAPE, false, 2);
+		System.out.println("Bricks: " + mosaic.getMosaicBricks().length);
 		
 		// create the frame
 		frame = new JFrame("LegoMosaic");
@@ -116,30 +116,33 @@ public class TestMain
 				int w = mosaicBrick.orientedBrick.orientedStudWidth  * studPixelSize + (mosaicBrick.orientedBrick.orientedStudWidth  - 1) * gap;
 				int h = mosaicBrick.orientedBrick.orientedStudHeight * studPixelSize + (mosaicBrick.orientedBrick.orientedStudHeight - 1) * gap;
 				
-				//g.setColor(mosaicBrick.brick.color.color);
+				g.setColor(mosaicBrick.orientedBrick.brick.color.color);
 				g.setColor(mosaicBrick.orientedBrick.brick.color == LegoColor.Black? mosaicBrick.orientedBrick.brick.shape.debugColor : mosaicBrick.orientedBrick.brick.color.color);
 				g.fillRect(x, y, w, h);
 				
 				if (mosaicBrick == selectedMosaicBrick)
 				{
 					g.setColor(Color.BLACK);
-					g.drawRect(x, y, w - 1, h - 1);
+					g.drawRect(x, y, w - 2, h - 2);
 				}
 			}
 			
-			g.setColor(new Color(0, 0, 0, 64));
 			for (int i = 0; i < IMAGE_SIZE; ++i)
 			{
 				int p = i * (studPixelSize + gap) - gap/2 - 1;
 				int l = IMAGE_SIZE * (studPixelSize + gap);
 				
+				g.setColor(new Color(0, 0, 0, 64));
 				g.drawLine(0, p, l, p);
 				g.drawLine(p, 0, p, l);
+				
+				g.setColor(Color.black);
 				g.drawString(Integer.toString(i), p + (studPixelSize + gap) / 2, 10);
 				g.drawString(Integer.toString(i), 0, p + (studPixelSize + gap) / 2 + 10);
 			}
 			
-			/*for (int i = 0; i < mosaicBricks.length; ++i)
+			g.setColor(Color.BLACK);
+			for (int i = 0; i < mosaicBricks.length; ++i)
 			{
 				MosaicBrick mosaicBrick = mosaicBricks[i];
 				
@@ -148,9 +151,8 @@ public class TestMain
 				int w = mosaicBrick.orientedBrick.orientedStudWidth  * studPixelSize + (mosaicBrick.orientedBrick.orientedStudWidth  - 1) * gap;
 				int h = mosaicBrick.orientedBrick.orientedStudHeight * studPixelSize + (mosaicBrick.orientedBrick.orientedStudHeight - 1) * gap;
 				
-				g.setColor(Color.BLACK);
 				g.drawRect(x - 1, y - 1, w, h);
-			}*/
+			}
 		}
 	}
 }
