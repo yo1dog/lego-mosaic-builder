@@ -1,4 +1,4 @@
-package net.awesomebox.legoMosaicBuilder;
+package net.awesomebox.legoMosaicBuilder.web;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,7 +13,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import net.awesomebox.legoMosaicBuilder.MosaicBuilder.MosaicBuilderException;
+import net.awesomebox.legoMosaicBuilder.builder.Mosaic;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBuilder;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBuilder.MosaicBuilderException;
 import net.awesomebox.legoMosaicBuilder.lego.LegoColor;
 import net.awesomebox.legoMosaicBuilder.lego.LegoConnector;
 import net.awesomebox.legoMosaicBuilder.lego.LegoShape;
@@ -23,12 +26,12 @@ public class TestMain
 	private static final LegoShape BASE_SHAPE = LegoShape._1x1;
 	private static final int IMAGE_SIZE = 20;
 	
-	private static Mosaic mosaic;
-	private static int studPixelSize;
-	private static int gap = 1;
-	private static MosaicBrick selectedMosaicBrick;
-	private static CustomPanel panel;
-	private static JFrame frame;
+	static Mosaic mosaic;
+	static int studPixelSize;
+	static int gap = 1;
+	static MosaicBrick selectedMosaicBrick;
+	static CustomPanel panel;
+	static JFrame frame;
 	
 	public static void main(String[] args) throws MosaicBuilderException, IOException
 	{
@@ -39,7 +42,7 @@ public class TestMain
 		BufferedImage image = ImageIO.read(new File(imageFilename));
 		
 		mosaic = MosaicBuilder.buildMosaic(image, IMAGE_SIZE, IMAGE_SIZE, BASE_SHAPE, false, 2);
-		System.out.println("Bricks: " + mosaic.getMosaicBricks().length);
+		System.out.println("Bricks: " + mosaic.mosaicBricks.length);
 		
 		// create the frame
 		frame = new JFrame("LegoMosaic");
@@ -54,9 +57,9 @@ public class TestMain
 		panel.setBackground(Color.WHITE);
 		panel.addMouseListener(new MouseListener()
 		{
+			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				MosaicBrick[] mosaicBricks = mosaic.getMosaicBricks();
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 				
@@ -64,9 +67,9 @@ public class TestMain
 				
 				System.out.println("==========================");
 				
-				for (int i = 0; i < mosaicBricks.length; ++i)
+				for (int i = 0; i < mosaic.mosaicBricks.length; ++i)
 				{
-					MosaicBrick mosaicBrick = mosaicBricks[i];
+					MosaicBrick mosaicBrick = mosaic.mosaicBricks[i];
 					
 					int x1 = mosaicBrick.originStudX * (studPixelSize + gap);
 					int y1 = mosaicBrick.originStudY * (studPixelSize + gap);
@@ -86,9 +89,13 @@ public class TestMain
 				frame.repaint();
 			}
 			
+			@Override
 			public void mouseEntered(MouseEvent e) {}
+			@Override
 			public void mouseExited(MouseEvent e) {}
+			@Override
 			public void mousePressed(MouseEvent e) {}
+			@Override
 			public void mouseReleased(MouseEvent e) {}
 		});
 		frame.getContentPane().add(panel, java.awt.BorderLayout.CENTER);
@@ -102,14 +109,16 @@ public class TestMain
 	{
 		private static final long serialVersionUID = 1l;
 		
+		CustomPanel() {}
+
+		@Override
 		public void paint(Graphics g)
 		{
-			studPixelSize = Math.max(1, (Math.min(this.getWidth(), this.getHeight()) - IMAGE_SIZE * gap) / IMAGE_SIZE);
+			TestMain.studPixelSize = Math.max(1, (Math.min(this.getWidth(), this.getHeight()) - IMAGE_SIZE * gap) / IMAGE_SIZE);
 			
-			MosaicBrick[] mosaicBricks = mosaic.getMosaicBricks();
-			for (int i = 0; i < mosaicBricks.length; ++i)
+			for (int i = 0; i < mosaic.mosaicBricks.length; ++i)
 			{
-				MosaicBrick mosaicBrick = mosaicBricks[i];
+				MosaicBrick mosaicBrick = mosaic.mosaicBricks[i];
 				
 				int x = mosaicBrick.originStudX * (studPixelSize + gap);
 				int y = mosaicBrick.originStudY * (studPixelSize + gap);
@@ -142,9 +151,9 @@ public class TestMain
 			}
 			
 			g.setColor(Color.BLACK);
-			for (int i = 0; i < mosaicBricks.length; ++i)
+			for (int i = 0; i < mosaic.mosaicBricks.length; ++i)
 			{
-				MosaicBrick mosaicBrick = mosaicBricks[i];
+				MosaicBrick mosaicBrick = mosaic.mosaicBricks[i];
 				
 				int x = mosaicBrick.originStudX * (studPixelSize + gap);
 				int y = mosaicBrick.originStudY * (studPixelSize + gap);

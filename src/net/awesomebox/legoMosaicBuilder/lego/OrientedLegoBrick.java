@@ -6,8 +6,8 @@ public class OrientedLegoBrick
 	public final LegoBrick brick;
 	public final boolean rotated;
 	
-	public final int orientedStudWidth;
-	public final int orientedStudHeight;
+	public final transient int orientedStudWidth;
+	public final transient int orientedStudHeight;
 	
 	OrientedLegoBrick(LegoBrick brick, boolean rotated)
 	{

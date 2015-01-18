@@ -1,4 +1,4 @@
-package net.awesomebox.legoMosaicBuilder;
+package net.awesomebox.legoMosaicBuilder.web;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -17,6 +17,7 @@ public final class Test extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
 	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		response.setStatus(200);

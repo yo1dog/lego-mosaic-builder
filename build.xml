@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<project name="legoMosaicBuilder" default="build-war">
+	
+	<!-- Build -->
+	
+	<property name="war-name" value="${ant.project.name}.war" />
+	
+	<target name="build-war">
+		<war destfile="build/${war-name}" webxml="WebContent/WEB-INF/web.xml">
+			<fileset dir="WebContent" />
+			<fileset dir="src" /> 
+			<classes dir="build/classes" /> 
+		</war>
+	</target>
+	
+	
+	<!-- Remote Deploy -->
+	
+	<property name="ssh-host"     value="awesomebox.net" />
+	<property name="ssh-username" value="mike" />
+	<property name="ssh-password" value="" />
+	<property name="ssh-keyfile"  value="~/.ssh/mike_AwesomeBox.pem" />
+	
+
+	<target name="remote-deploy" depends="build-war">
+		<scp file="build/${war-name}" todir="${ssh-username}:${ssh-password}@${ssh-host}:~/" keyfile="${ssh-keyfile}" />
+		
+		<sshexec host="${ssh-host}" username="${ssh-username}" password="${ssh-password}" keyfile="${ssh-keyfile}"
+			usepty="true" command="sudo mv ~/${war-name} ~/tomcat/webapps/" />
+	</target>
+</project>

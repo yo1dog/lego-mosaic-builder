@@ -1,4 +1,4 @@
-package net.awesomebox.legoMosaicBuilder;
+package net.awesomebox.legoMosaicBuilder.builder;
 
 import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 
@@ -8,10 +8,10 @@ public final class MosaicBrick
 	public final OrientedLegoBrick orientedBrick;
 	public final int originStudX;
 	public final int originStudY;
-	public final MosaicBrick splitter;
+	public transient final MosaicBrick splitter;
 	
-	private boolean removed;
-	private boolean level3Optimized;
+	private transient boolean removed;
+	private transient boolean level3Optimized;
 	
 	
 	public MosaicBrick(OrientedLegoBrick orientedBrick, int originStudX, int originStudY)
@@ -50,6 +50,7 @@ public final class MosaicBrick
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return
@@ -58,6 +59,5 @@ public final class MosaicBrick
 			this.orientedBrick.orientedStudWidth + " x " + this.orientedBrick.orientedStudHeight + "\n" +
 			"splitter: " + String.valueOf(splitter) + "\n" +
 			"-------------";
-			
 	}
 }

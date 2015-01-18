@@ -10,7 +10,9 @@ public class LegoColor
 	public final int r;
 	public final int g;
 	public final int b;
-	public final Color color;
+	public final transient Color color;
+	public final transient String colorHexString;
+	
 	
 	// IMPORTANT: we assume bricks are ordered from largest to smallest
 	transient LegoBrick[] bricks = new LegoBrick[0];
@@ -28,6 +30,20 @@ public class LegoColor
 		this.b = b;
 		
 		color = new Color(r, g, b);
+		
+		String rHex = Integer.toHexString(r);
+		if (rHex.length() < 2)
+			rHex = "0" + rHex;
+		
+		String gHex = Integer.toHexString(g);
+		if (gHex.length() < 2)
+			gHex = "0" + gHex;
+		
+		String bHex = Integer.toHexString(b);
+		if (bHex.length() < 2)
+			bHex = "0" + bHex;
+		
+		colorHexString = rHex + gHex + bHex;
 	}
 	
 	public final LegoBrick[] getBricks()

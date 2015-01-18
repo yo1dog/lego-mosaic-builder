@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Lego Mosaic</title>
+		
+		<script type="text/javascript">
+		  var xmlhttp = null;
+		  var mosaic = null;
+		  
+		  function buildMosaic() {
+		    
+		    if (xmlhttp) {
+		      return;
+		    }
+		    
+		    var mosaicWidth     = document.getElementById("mosaicWidth").value;
+		    var mosaicHeight    = document.getElementById("mosaicHeight").value;
+		    var mosaicImageFile = document.getElementById("mosaicImage").files[0];
+		    
+		    // TODO: user input validation
+		    
+		    
+		    var formData = new FormData();
+		    formData.append("mosaicWidth",  mosaicWidth);
+		    formData.append("mosaicHeight", mosaicHeight);
+		    formData.append("mosaicImage",  mosaicImageFile);
+		    
+		    
+		    xmlhttp = window.XMLHttpRequest? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+		    
+		    xmlhttp.open("POST", "/legoMosaicBuilder/api/buildMosaic", true);
+		    xmlhttp.onreadystatechange = buildMosaicResponse;
+		    
+		    xmlhttp.send(formData);
+		  }
+		  
+		  function buildMosaicResponse() {
+		    if (xmlhttp.readyState === 4) {
+		      var statusCode   = xmlhttp.status;
+		      var responseBody = xmlhttp.responseText;
+		      
+		      xmlhttp = null;
+		      
+		      if (statusCode !== 200) {
+		        return showError("Status Code: " + statusCode)
+		      }
+		      
+		      
+		      var mosaicObj;
+		      
+		      try {
+		        mosaicObj = JSON.parse(responseBody);
+		      }
+		      catch(err) {
+		        return showError(err);
+		      }
+		      
+		      mosaic = mosaicObj;
+		      
+		      drawMosaic();
+		    }
+		  }
+		  
+		  
+		  function drawMosaic() {
+		    if (!mosaic) return;
+		    
+		    if (!mosaic.studWidth)    return showError("studWidth missing.");
+		    if (!mosaic.studHeight)   return showError("studHeight missing.");
+		    if (!mosaic.mosaicBricks) return showError("mosaicBrickModels missing.");
+		    
+		    var canvas = document.getElementById("mosaicCanvas");
+		    var canvasWidth  = canvas.width;
+		    var canvasHeight = canvas.height;
+		    
+		    var mosaicDrawWidth;
+		    var mosaicDrawHeight;
+		    
+		    var dWidth  = Math.abs(canvas.scrollWidth  - mosaic.studWidth);
+		    var dHeight = Math.abs(canvas.scrollHeight - mosaic.studHeight);
+		    
+		    if (dWidth > dHeight) {
+		      mosaicDrawWidth = canvasWidth;
+		      mosaicDrawHeight = mosaicDrawWidth * (mosaic.studHeight / mosaic.studWidth);
+		    }
+		    else {
+		      mosaicDrawWidth = canvasWidth * (mosaic.studWidth / mosaic.studHeight);
+		      mosaicDrawHeight = canvasHeight;
+		    }
+		    
+		    
+		    var studSpacingPixels = document.getElementById("useSpacing").checked? 1 : 0;
+		    var studPixelSize = Math.floor((canvasWidth - (studSpacingPixels * mosaic.studWidth - 1)) / mosaic.studWidth);
+		    
+		    // clear mosiac
+		    var ctx = canvas.getContext("2d");
+		    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+		    
+		    // draw animated
+		    drawMosaicFrame(ctx, studPixelSize, studSpacingPixels, 0);
+		  }
+		  
+		  function drawMosaicFrame(ctx, studPixelSize, studSpacingPixels, f) {
+		    var brickDelayFrames = 3;
+		    var brickAnimFrames = 6;
+		    // delay each block by 30 frames
+		    // spend 60 frames animating
+		    
+		    var startBrickIndex = Math.ceil((f - brickAnimFrames) / brickDelayFrames);
+		    var endBrickIndex   = Math.floor(f / brickDelayFrames);
+		    
+		    if (startBrickIndex < 0) {
+		      startBrickIndex = 0;
+		    }
+		    if (endBrickIndex >= mosaic.mosaicBricks.length) {
+		      endBrickIndex = mosaic.mosaicBricks.length - 1;
+		    }
+		    if (startBrickIndex > endBrickIndex) {
+		      return;
+		    }
+		    
+		    for (var i = startBrickIndex; i <= endBrickIndex; ++i) {
+		      var mosaicBrick = mosaic.mosaicBricks[i];
+		      if (mosaicBrick.color === "ffffff") continue;
+		      
+		      var studWidth;
+		      var studHeight;
+		      
+		      if (mosaicBrick.rotated) {
+		        studWidth  = mosaicBrick.studHeight;
+		        studHeight = mosaicBrick.studWidth;
+		      }
+		      else {
+		        studWidth  = mosaicBrick.studWidth;
+		        studHeight = mosaicBrick.studHeight;
+		      }	        
+		      
+		      var x = mosaicBrick.originStudX * (studPixelSize + studSpacingPixels);
+		      var y = mosaicBrick.originStudY * (studPixelSize + studSpacingPixels);
+		      var w = studWidth  * studPixelSize + (studWidth  - 1) * studSpacingPixels;
+		      var h = studHeight * studPixelSize + (studHeight - 1) * studSpacingPixels;
+		      
+		      var startAnimFrame = i * brickDelayFrames;
+		      var animScale = (f - startAnimFrame) / brickAnimFrames;
+		      
+		      ctx.fillStyle = "#" + mosaicBrick.color;
+		      ctx.fillRect(x, y, w * animScale, h * animScale);
+		    }
+		    
+		    setTimeout(function() { drawMosaicFrame(ctx, studPixelSize, studSpacingPixels, ++f); }, 0.1);
+		  }
+		  
+		  
+		  function showError(err) {
+		    console.error(err);
+		    
+		    var errors = document.getElementById("errors");
+		    errors.style.display = "block";
+		    errors.innerHTML = "ERROR: " + err;
+		  }
+		</script>
+	</head>
+	<body>
+		<h1>Lego Mosaic Builder</h1>
+		
+		<form action="javascript:buildMosaic();">
+			<table>
+				<tr><th><label for="mosaicWidth"> Stud Width </label></th><td><input id="mosaicWidth"  type="number" min="1" max="200" required="required" value="100" /></td></tr>
+				<tr><th><label for="mosaicHeight">Stud Height</label></th><td><input id="mosaicHeight" type="number" min="1" max="200" required="required" value="100" /></td></tr>
+			</table>
+			
+			<br />
+			<input id="mosaicImage" type="file" accept="image/jpeg" required="required" /><br />
+			<br />
+			<input type="submit" value="Build!" />
+		</form>
+		
+		<pre id="errors" style="display: hidden;"></pre>
+		
+		<br />
+		<br />
+		<input id="useSpacing" type="checkbox" onchange="drawMosaic();" /> <label for="useSpacing">Spacing</label><br />
+		
+		<br />
+		<canvas id="mosaicCanvas" width="600" height="600" style="border: 1px solid #000000;"></canvas>
+	</body>
+</html>

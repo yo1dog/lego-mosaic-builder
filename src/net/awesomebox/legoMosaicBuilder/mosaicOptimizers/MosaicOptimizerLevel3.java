@@ -1,11 +1,8 @@
 package net.awesomebox.legoMosaicBuilder.mosaicOptimizers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import net.awesomebox.legoMosaicBuilder.MosaicBrick;
-import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
-import net.awesomebox.legoMosaicBuilder.mosaicBuilderUtils.MosaicBrickCombiner;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBrick;
 
 //=============================================================================
 // =============================================================================

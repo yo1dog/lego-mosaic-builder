@@ -2,8 +2,8 @@ package net.awesomebox.legoMosaicBuilder.mosaicBuilderUtils;
 
 import java.util.ArrayList;
 
-import net.awesomebox.legoMosaicBuilder.MosaicBrick;
-import net.awesomebox.legoMosaicBuilder.MosaicSplitBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicSplitBrick;
 import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 
 final class MosaicBrickCombinerHorizontal
@@ -243,11 +243,6 @@ final class MosaicBrickCombinerHorizontal
 				
 				
 				// we can combine the bricks!
-				System.out.println("================H==================");
-				System.out.println("===================================");
-				System.out.println(mosaicBrick);
-				System.out.println("===================================");
-				
 				// split the bricks
 				for (int i = 0; i < numSplitBricks; ++i)
 				{
@@ -256,7 +251,6 @@ final class MosaicBrickCombinerHorizontal
 					// remove the original brick
 					splitBrick.originalMosaicBrick.remove();
 					mosaicBricks.remove(splitBrick.originalMosaicBrick);
-					System.out.println("Removing original: " + splitBrick.originalMosaicBrick);
 					
 					
 					// place top
@@ -280,8 +274,6 @@ final class MosaicBrickCombinerHorizontal
 						
 						// add the brick
 						mosaicBricks.add(topMosaicBrick);
-						System.out.println("Adding top: " + topMosaicBrick);
-						
 						
 						
 						// place top extra
@@ -305,7 +297,6 @@ final class MosaicBrickCombinerHorizontal
 							
 							// add the brick
 							mosaicBricks.add(topExtraMosaicBrick);
-							System.out.println("Adding top extra: " + topExtraMosaicBrick);
 						}
 					}
 					
@@ -332,7 +323,6 @@ final class MosaicBrickCombinerHorizontal
 						
 						// add the brick
 						mosaicBricks.add(bottomMosaicBrick);
-						System.out.println("Adding bottom: " + bottomMosaicBrick);
 						
 						
 						
@@ -357,7 +347,6 @@ final class MosaicBrickCombinerHorizontal
 							
 							// add the brick
 							mosaicBricks.add(bottomExtraMosaicBrick);
-							System.out.println("Adding bottom extra: " + bottomExtraMosaicBrick);
 						}
 					}
 				}
@@ -370,8 +359,6 @@ final class MosaicBrickCombinerHorizontal
 				
 				mosaicBricks.remove(mosaicBrick);
 				mosaicBricks.remove(combiningMosaicBrick);
-				System.out.println("Removing current: " + mosaicBrick);
-				System.out.println("Removing combining: " + combiningMosaicBrick);
 				
 				
 				// place the combined brick
@@ -386,7 +373,6 @@ final class MosaicBrickCombinerHorizontal
 				
 				// add the brick
 				mosaicBricks.add(combinedMosaicBrick);
-				System.out.println("Adding combined: " + combinedMosaicBrick);
 				return true;
 			}
 		}

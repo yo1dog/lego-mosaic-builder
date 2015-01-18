@@ -1,4 +1,4 @@
-package net.awesomebox.legoMosaicBuilder;
+package net.awesomebox.legoMosaicBuilder.builder;
 
 import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 

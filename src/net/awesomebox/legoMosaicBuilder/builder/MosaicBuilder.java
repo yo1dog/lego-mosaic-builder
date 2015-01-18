@@ -1,4 +1,4 @@
-package net.awesomebox.legoMosaicBuilder;
+package net.awesomebox.legoMosaicBuilder.builder;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -10,7 +10,6 @@ import net.awesomebox.legoMosaicBuilder.lego.LegoColor;
 import net.awesomebox.legoMosaicBuilder.lego.LegoShape;
 import net.awesomebox.legoMosaicBuilder.mosaicOptimizers.MosaicOptimizerLevel1;
 import net.awesomebox.legoMosaicBuilder.mosaicOptimizers.MosaicOptimizerLevel2;
-import net.awesomebox.legoMosaicBuilder.mosaicOptimizers.MosaicOptimizerLevel3;
 
 
 
@@ -41,8 +40,8 @@ public final class MosaicBuilder
 		
 		
 		// DEBUG: don't resize
-		mosaicStudWidth = originalImage.getWidth();
-		mosaicStudHeight = originalImage.getHeight();
+		//mosaicStudWidth = originalImage.getWidth();
+		//mosaicStudHeight = originalImage.getHeight();
 		
 		
 		LegoBrick[] baseShapeBricks = baseShape.getBricks();
@@ -280,7 +279,7 @@ public final class MosaicBuilder
 					mosaicBricks[y * mosaicStudWidth + x] = mosaic[x][y];
 			}
 			
-			return new Mosaic(mosaicBricks);
+			return new Mosaic(mosaicBricks, mosaicStudWidth, mosaicStudHeight);
 		}
 		
 		
@@ -331,7 +330,7 @@ public final class MosaicBuilder
 		// =============================================================================
 		
 		if (optimizationLevel < 2)
-			return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]));
+			return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]), mosaicStudWidth, mosaicStudHeight);
 		
 		MosaicOptimizerLevel2.optimize(mosaic, mosaicStudWidth, mosaicStudHeight, mosaicBricks);
 		
@@ -343,12 +342,12 @@ public final class MosaicBuilder
 		// order.
 		// =============================================================================
 		
-		if (optimizationLevel < 3)
+		/*if (optimizationLevel < 3)
 			return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]));
 		
-		MosaicOptimizerLevel3.optimize(mosaic, mosaicStudWidth, mosaicStudHeight, mosaicBricks);
+		MosaicOptimizerLevel3.optimize(mosaic, mosaicStudWidth, mosaicStudHeight, mosaicBricks);*/
 		
-		return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]));
+		return new Mosaic(mosaicBricks.toArray(new MosaicBrick[mosaicBricks.size()]), mosaicStudWidth, mosaicStudHeight);
 	}
 	
 	

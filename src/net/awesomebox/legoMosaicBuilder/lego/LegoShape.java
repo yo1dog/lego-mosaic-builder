@@ -10,7 +10,7 @@ public final class LegoShape
 	public final int studWidth;
 	public final int studHeight;
 	
-	public final Color debugColor;
+	public final transient Color debugColor;
 	
 	transient LegoBrick[] bricks = new LegoBrick[0];
 	

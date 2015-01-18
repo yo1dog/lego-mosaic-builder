@@ -2,8 +2,8 @@ package net.awesomebox.legoMosaicBuilder.mosaicBuilderUtils;
 
 import java.util.ArrayList;
 
-import net.awesomebox.legoMosaicBuilder.MosaicBrick;
-import net.awesomebox.legoMosaicBuilder.MosaicSplitBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicSplitBrick;
 import net.awesomebox.legoMosaicBuilder.lego.OrientedLegoBrick;
 
 abstract class MosaicBrickCombinerVertical
@@ -243,11 +243,6 @@ abstract class MosaicBrickCombinerVertical
 				
 				
 				// we can combine the bricks!
-				System.out.println("================V==================");
-				System.out.println("===================================");
-				System.out.println(mosaicBrick);
-				System.out.println("===================================");
-				
 				// split the bricks
 				for (int i = 0; i < numSplitBricks; ++i)
 				{
@@ -256,7 +251,6 @@ abstract class MosaicBrickCombinerVertical
 					// remove the original brick
 					splitBrick.originalMosaicBrick.remove();
 					mosaicBricks.remove(splitBrick.originalMosaicBrick);
-					System.out.println("Removing original: " + splitBrick.originalMosaicBrick);
 					
 					
 					// place left
@@ -280,7 +274,6 @@ abstract class MosaicBrickCombinerVertical
 						
 						// add the brick
 						mosaicBricks.add(leftMosaicBrick);
-						System.out.println("Adding left: " + leftMosaicBrick);
 						
 						
 						
@@ -305,7 +298,6 @@ abstract class MosaicBrickCombinerVertical
 							
 							// add the brick
 							mosaicBricks.add(leftExtraMosaicBrick);
-							System.out.println("Adding left extra: " + leftExtraMosaicBrick);
 						}
 					}
 					
@@ -332,7 +324,6 @@ abstract class MosaicBrickCombinerVertical
 						
 						// add the brick
 						mosaicBricks.add(rightMosaicBrick);
-						System.out.println("Adding right: " + rightMosaicBrick);
 						
 						
 						
@@ -357,7 +348,6 @@ abstract class MosaicBrickCombinerVertical
 							
 							// add the brick
 							mosaicBricks.add(rightExtraMosaicBrick);
-							System.out.println("Adding right extra: " + rightExtraMosaicBrick);
 						}
 					}
 				}
@@ -370,8 +360,6 @@ abstract class MosaicBrickCombinerVertical
 				
 				mosaicBricks.remove(mosaicBrick);
 				mosaicBricks.remove(combiningMosaicBrick);
-				System.out.println("Removing current: " + mosaicBrick);
-				System.out.println("Removing combining: " + combiningMosaicBrick);
 				
 				
 				// place the combined brick
@@ -386,7 +374,6 @@ abstract class MosaicBrickCombinerVertical
 				
 				// add the brick
 				mosaicBricks.add(combinedMosaicBrick);
-				System.out.println("Adding combined: " + combinedMosaicBrick);
 				return true;
 			}
 		}

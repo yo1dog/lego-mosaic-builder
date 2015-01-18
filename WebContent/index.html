@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Lego Mosaic</title>
+		
+		<script type="text/javascript" src="js/legoMosaicBuilder.js"></script>
+		<script type="text/javascript">
+var legoMosaicBuilder;
+var mosaicCanvisElem;
+var mosaicWidthElem;
+var mosaicHeightElem;
+var mosaicImageElem;
+
+
+function init() {
+  mosaicCanvasElem = document.getElementById("mosaicCanvas");
+  mosaicWidthElem  = document.getElementById("mosaicWidth");
+  mosaicHeightElem = document.getElementById("mosaicHeight");
+  mosaicImageElem  = document.getElementById("mosaicImage");
+  
+  if (legoMosaicBuilder) return;
+  
+  var err = LegoMosaicBuilder.checkCompatibility();
+  if (err) return showError(err);
+  
+  legoMosaicBuilder = new LegoMosaicBuilder(mosaicCanvasElem);
+}
+
+
+function updateMosaicSize() {
+  if (!legoMosaicBuilder) return;
+  
+  var studWidth  = parseInt(mosaicWidthElem.value);
+  var studHeight = parseInt(mosaicHeightElem.value);
+  
+  if (isNaN(studWidth) || isNaN(studHeight)) return;
+  
+  legoMosaicBuilder.resizeMosaic(studWidth, studHeight);
+}
+
+
+function updateMosaicImage() {
+  if (!legoMosaicBuilder) return;
+  
+  var file = mosaicImageElem.files[0];
+  if (!file) return;
+  
+  legoMosaicBuilder.loadImage(file, function(err) {
+    if (err) return showError(err);
+  });
+}
+
+
+function showError(err) {
+  console.error(err);
+  
+  var elem = document.getElementById("errors");
+  elem.style.display = "block";
+  elem.innerHTML = "" + err;
+}
+		</script>
+	</head>
+	<body onload="init();">
+		<h1>Lego Mosaic Builder</h1>
+		
+		<form action="javascript:updateMosaicSize();">
+			<table>
+				<tr><th><label for="mosaicWidth"> Stud Width </label></th><td><input id="mosaicWidth"  type="number" min="1" max="200" required="required" value="100" /></td></tr>
+				<tr><th><label for="mosaicHeight">Stud Height</label></th><td><input id="mosaicHeight" type="number" min="1" max="200" required="required" value="100" /></td></tr>
+			</table>
+			<input type="submit" value="Update" />
+		</form>
+		
+		<br />
+		<form action="javascript:updateMosaicImage();">
+			<input id="mosaicImage" type="file" accept="image/jpeg" required="required" /><br />
+			<input type="submit" value="Update" />
+		</form>
+		
+		<pre id="errors" style="display: hidden;"></pre>
+		
+		<br />
+		<br />
+		<canvas id="mosaicCanvas" width="600" height="600" style="border: 1px solid #000000;"></canvas>
+	</body>
+</html>

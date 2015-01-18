@@ -2,7 +2,7 @@ package net.awesomebox.legoMosaicBuilder.mosaicBuilderUtils;
 
 import java.util.ArrayList;
 
-import net.awesomebox.legoMosaicBuilder.MosaicBrick;
+import net.awesomebox.legoMosaicBuilder.builder.MosaicBrick;
 
 public final class MosaicBrickCombiner
 {

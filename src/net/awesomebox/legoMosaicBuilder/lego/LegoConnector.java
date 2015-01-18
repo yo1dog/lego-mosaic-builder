@@ -352,7 +352,7 @@ public final class LegoConnector
 	{
 		private static final long serialVersionUID = 1L;
 
-		private HTTPInvalidResponseException(String message)
+		HTTPInvalidResponseException(String message)
 		{
 			super (message);
 		}
@@ -362,7 +362,7 @@ public final class LegoConnector
 	{
 		private static final long serialVersionUID = 1L;
 
-		private LegoRequestException(String message, Throwable t)
+		LegoRequestException(String message, Throwable t)
 		{
 			super (message, t);
 		}
