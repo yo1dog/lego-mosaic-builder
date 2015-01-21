@@ -1,0 +1,1 @@
+A front end for turning images into mosaics made from Lego bricks. Only currently available bricks from Lego.com are used.
